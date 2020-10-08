@@ -1,0 +1,22 @@
+{
+  "name": "order-process-wf-api",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Dinakar Potu",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.768.0",
+    "moment": "^2.29.1",
+    "underscore": "^1.11.0",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "serverless-domain-manager": "^5.0.0",
+    "serverless-offline": "^6.8.0"
+  },
+  "description": ""
+}

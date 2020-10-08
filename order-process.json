@@ -1,0 +1,85 @@
+{
+    "StartAt": "ValidateOrder",
+    "States": {
+      "ValidateOrder": {
+        "Type": "Choice",
+        "Choices": [
+          {
+            "Variable": "$.input.choice",
+            "StringEquals": "mobile",
+            "Next": "ProcessMobile"
+          },
+          {
+            "Variable": "$.input.choice",
+            "StringEquals": "data",
+            "Next": "ProcessMobile"
+          },
+          {
+            "Variable": "$.input.choice",
+            "StringEquals": "landline",
+            "Next": "LandlineActivation"
+          }
+        ],
+        "Default": "InvalidOrder"
+      },
+      "InvalidOrder": {
+        "Type": "Fail",
+        "Error": "Key in correct Order data",
+        "Cause": "Invalid Order syntax"
+      },
+      "LandlineActivation": {
+        "Type": "Pass",
+        "ResultPath": "$.input.landline",
+        "Next": "add-order"
+      },
+      "ProcessMobile": {
+        "Type": "Parallel",
+        "ResultPath": "$.input.handset",
+        "Next": "add-order",
+        "Branches": [
+          {
+            "StartAt": "MobileActivation",
+            "States": {
+              "MobileActivation": {
+                "Type": "Pass",
+                "ResultPath": "$.cell.mobile",
+                "OutputPath": "$.cell",
+                "End": true
+              }
+            }
+          },
+          {
+            "StartAt": "DataActivation",
+            "States": {
+              "DataActivation": {
+                "Type": "Pass",
+                "ResultPath": "$.cell.4G",
+                "OutputPath": "$.cell",
+                "End": true
+              }
+            }
+          }
+        ]
+      },
+      "add-order": {
+        "Type": "Task",
+        "Resource": [USE ARN OF LAMBDA FUNCTION: ADD-ORDER-WF],
+        "TimeoutSeconds": 5,
+        "ResultPath": "$.input.addStatus",
+        "End": true,
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "QuitMain"
+          }
+        ]
+      },
+      "QuitMain": {
+        "Type": "Fail",
+        "Error": "GenericError",
+        "Cause": "An error occurred while executing the state machine"
+      }
+    }
+  }
